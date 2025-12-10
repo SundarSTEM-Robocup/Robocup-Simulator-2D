@@ -18,6 +18,7 @@
 #include "Robotstats.h"
 #include "playerManager.h"
 #include "Sensor.h"
+// #include "DrawStuff.h"
 // #include "grsim_interface.h"
 #define To_Be_Implemented int
 #define dt 1 / cfg::SystemConfig::frameRate
@@ -29,17 +30,17 @@ class Game : public QWidget {
   State gameState = State::Kickoff;
   Player::PlayerManager Players_;
   Ball::Ball Ball_;
-  UI Field; 
+  UI Field;
   RbSt Stats;
   HW::SensorManager Hardware;
-  void drawStats(QPainter *painter);
-  void drawField(QPainter *painter);
-  void ManagePlayers(QPainter *painter);
-  void drawBall(QPainter *painter);
-  void paintEvent(QPaintEvent *) override;
-  void keyPressEvent(QKeyEvent *event) override;
-  void keyReleaseEvent(QKeyEvent *event) override;
-  void mousePressEvent(QMouseEvent *event) override;
+  void drawStats(QPainter* painter);
+  void drawField(QPainter* painter);
+  void ManagePlayers(QPainter* painter);
+  void drawBall(QPainter* painter);
+  void paintEvent(QPaintEvent*) override;
+  void keyPressEvent(QKeyEvent* event) override;
+  void keyReleaseEvent(QKeyEvent* event) override;
+  void mousePressEvent(QMouseEvent* event) override;
   void handleInsertKey(int Key);
   void handleRemoveKey(int Key);
   void keyControls();
@@ -48,7 +49,7 @@ class Game : public QWidget {
   int SelectedPlayerId = 0;
 
  public:
-  Game(QWidget *parent = nullptr);
+  Game(QWidget* parent = nullptr);
 };
 
 }  // namespace Controller

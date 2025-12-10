@@ -6,7 +6,7 @@ const float cfg::SystemConfig::distanceFromRobotCenter = 0.1925;
 std::vector<cfg::SystemConfig::RobotState> cfg::SystemConfig::PlayerStates;
 
 const std::vector<float> cfg::SystemConfig::wheelAngles = {
-                                0.523598776f, 2.617993878f, 3.926990817f, 5.497787144f};  // IN RADIANTS
+    0.523598776f, 2.617993878f, 3.926990817f, 5.497787144f};  // IN RADIANTS
 
 // Friction
 const float cfg::SystemConfig::staticBallFrictionCoefficient = 0.5;
@@ -18,27 +18,30 @@ const float cfg::SystemConfig::kineticPlayerFrictionCoefficient = 0.75;
 const float cfg::SystemConfig::rollingPlayerFrictionCoefficient = 0.06;
 
 // Mani's Matrix
-std::vector<Eigen::Matrix<double, 6, 6>> cfg::SystemConfig::P(cfg::SystemConfig::numRobots, Eigen::Matrix<double, 6, 6>::Zero());
+std::vector<Eigen::Matrix<double, 6, 6>> cfg::SystemConfig::P(cfg::SystemConfig::numRobots,
+                                                              Eigen::Matrix<double, 6, 6>::Zero());
 static const bool _P_init = ([]() {
-    Eigen::Matrix<double, 6, 6> base = Eigen::Matrix<double, 6, 6>::Zero();
-    base.diagonal() << 0.05, 0.05, 0.005, 0.02, 0.02, 0.001;
-    for (auto &m : cfg::SystemConfig::P)
-        m = base;
-    return true;
+  Eigen::Matrix<double, 6, 6> base = Eigen::Matrix<double, 6, 6>::Zero();
+  base.diagonal() << 0.05, 0.05, 0.005, 0.02, 0.02, 0.001;
+  for (auto& m : cfg::SystemConfig::P) m = base;
+  return true;
 })();
+std::vector<std::vector<cfg::Node>> cfg::SystemConfig::grid;
 
 std::vector<Eigen::Vector3d> cfg::SystemConfig::CameraData;
 std::vector<float> cfg::SystemConfig::GyroData;
 std::vector<Eigen::Vector4d> cfg::SystemConfig::EncoderData;
-
+std::vector<std::vector<int>> grid;
 // Ball config
 const float cfg::SystemConfig::ballMass = 0.046f;
 const float cfg::SystemConfig::ballRadius = 0.0215f;
 const float cfg::SystemConfig::ballAcceleration = 0.1f;
-Eigen::Vector2d cfg::SystemConfig::currBallPosition = Eigen::Vector2d(0.0f, 0.0f);
+Eigen::Vector2d cfg::SystemConfig::currBallPosition = Eigen::Vector2d(1.0f, 0.0f);
 Eigen::Vector2d cfg::SystemConfig::currBallVel = Eigen::Vector2d(0.0f, 0.0f);
 const Eigen::Vector2d cfg::SystemConfig::initBallPosition = Eigen::Vector2d(1.0f, 0.0f);
-
+float cfg::SystemConfig::Accuracy =
+    0.6;  // 0.02 Meters or 2 CM // The lower this number, the higher the accuracy but slower the
+          // execution time // This also corresponds to the jump limit
 // Ball possession defaults
 bool cfg::SystemConfig::ballHeld = false;
 int cfg::SystemConfig::ballHolder = -1;
@@ -94,6 +97,9 @@ std::vector<std::vector<Eigen::Vector3d>> cfg::SystemConfig::teamOneWayPoints = 
 
 std::vector<std::vector<Eigen::Vector3d>> cfg::SystemConfig::teamTwoWayPoints = {{}, {}, {}, {}};
 
+std::vector<std::vector<Eigen::Vector3d>> cfg::SystemConfig::teamOnePath = {{}, {}, {}, {}};
+
+std::vector<std::vector<Eigen::Vector3d>> cfg::SystemConfig::teamTwoPath = {{}, {}, {}, {}};
 // Wheel RPMs
 std::vector<Eigen::Vector4d> cfg::SystemConfig::teamOneWheelRpm = []() {
   std::vector<Eigen::Vector4d> v(SystemConfig::numRobots);

@@ -4,6 +4,17 @@
 #include <Eigen/Dense>
 
 namespace cfg {
+struct Node {
+  Eigen::Vector2d Pos;
+  float g = INFINITY;
+  float rhs = INFINITY;
+  Eigen::Vector2d Key = Eigen::Vector2d(INFINITY, INFINITY);
+  bool obstacle = false;
+  bool operator>(const Node& other) const {
+    if (Key.x() != other.Key.x()) return Key.x() > other.Key.x();
+    return Key.y() > other.Key.y();
+  }
+};
 struct SystemConfig {
   static const float wheelRPM;
   static const float frameRate;
@@ -14,12 +25,14 @@ struct SystemConfig {
   static const std::vector<float> wheelAngles;
   static std::vector<RobotState> PlayerStates;
   static std::vector<Eigen::Matrix<double, 6, 6>> P;
+  static std::vector<std::vector<Node>> grid;
+  static float Accuracy;
 
   // Friction
   static const float staticBallFrictionCoefficient;
   static const float kineticBallFrictionCoefficient;
   static const float rollingBallFrictionCoefficient;
-  
+
   static const float staticPlayerFrictionCoefficient;
   static const float kineticPlayerFrictionCoefficient;
   static const float rollingPlayerFrictionCoefficient;
@@ -54,16 +67,17 @@ struct SystemConfig {
   static std::vector<Eigen::Vector3d> teamTwoPlayerVel;
   static std::vector<std::vector<Eigen::Vector3d>> teamOneWayPoints;
   static std::vector<std::vector<Eigen::Vector3d>> teamTwoWayPoints;
-
+  static std::vector<std::vector<Eigen::Vector3d>> teamOnePath;
+  static std::vector<std::vector<Eigen::Vector3d>> teamTwoPath;
   // Robot Team
   static std::vector<Eigen::Vector4d> teamOneWheelRpm;
   static std::vector<Eigen::Vector4d> teamTwoWheelRpm;
   static std::vector<Eigen::Vector3d> teamOneStartFormation;
   static std::vector<Eigen::Vector3d> teamTwoStartFormation;
-  
+
   // Ball possession
   static bool ballHeld;
-  static int ballHolder; // player ID who holds the ball, -1 if none
+  static int ballHolder;  // player ID who holds the ball, -1 if none
 };
 }  // namespace cfg
 

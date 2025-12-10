@@ -55,6 +55,7 @@ void PlayerManager::deflectPlayers(int PlayerID1, int PlayerID2) {
   SetPlayerV(V2, PlayerID2);
 }
 void PlayerManager::handleAuto(int PlayerInd) {
+  
   (Trajectory.SetVelocityFromTraj(PlayerInd), PlayerInd);
 }
 void PlayerManager::handleManual(int PlayerInd) {

@@ -1,19 +1,50 @@
 #include "TrapezoidalTrajectory.h"
 namespace Traj {
+
+Trapezoidal_Traj::Trapezoidal_Traj() {
+  for (int i = 0; i < int(cfg::SystemConfig::numRobots / 2); i++) init.push_back(false);
+}
+
 void Trapezoidal_Traj::SetVelocityFromTraj(int index) {
   index--;
-  if ((cfg::SystemConfig::teamOneWayPoints[index].size()) == 0) {
-    return;
-  }
-
   Eigen::Vector3d Dist;
-  Dist =
-      cfg::SystemConfig::teamOneWayPoints[index][0] - cfg::SystemConfig::teamOnePlayerPos[index];
+  bool choice = 0;
+  if ((cfg::SystemConfig::teamOneWayPoints[index].size()) == 0) {
+    if (!init[index])
+      Path.Init(cfg::SystemConfig::teamOnePlayerPos[index].head<2>(),
+                cfg::SystemConfig::currBallPosition);
+    Path.RobotInd = index + 1;
+    init[index] = true;
+    if (cfg::SystemConfig::teamOnePath[index].size() == 0) {
+      Path.update(cfg::SystemConfig::teamOnePlayerPos[index].head<2>(),
+                  cfg::SystemConfig::currBallPosition);
+    }
+    if (cfg::SystemConfig::teamOnePath[index].size() == 0) {
+      std::cout << "[Traj::Trapezoidal_Traj::SetVelocityFromTraj] No Waypoints or Path to follow, "
+                   "returning"
+                << std::endl;
+      return;
+    }
+
+    choice = 1;
+    Dist = cfg::SystemConfig::teamOnePath[index][0] - cfg::SystemConfig::teamOnePlayerPos[index];
+  } else
+    Dist =
+        cfg::SystemConfig::teamOneWayPoints[index][0] - cfg::SystemConfig::teamOnePlayerPos[index];
   if (Dist.norm() < 0.05) {
-    cfg::SystemConfig::teamOneWayPoints[index].erase(
-        cfg::SystemConfig::teamOneWayPoints[index].begin());
+    if (choice == 0) {
+      cfg::SystemConfig::teamOneWayPoints[index].erase(
+          cfg::SystemConfig::teamOneWayPoints[index].begin());
+    }
+    if (choice == 1) {
+      cfg::SystemConfig::teamOnePath[index].erase(cfg::SystemConfig::teamOnePath[index].begin());
+    }
     return;
   }
+  std::cout << "[Traj::Trapezoidal_Traj::SetVelocityFromTraj] Dist to Goal: "
+            << cfg::SystemConfig::teamOnePath[index][0].x() << " "
+            << cfg::SystemConfig::teamOnePath[index][0].y() << " is " << Dist.norm() << std::endl;
+
   double EuclidianDist = Dist.norm();
   double stoppingDist = cfg::SystemConfig::teamOnePlayerVel[index].squaredNorm() /
                         (2 * cfg::SystemConfig::playerMaxAcceleration);
@@ -42,6 +73,5 @@ void Trapezoidal_Traj::SetVelocityFromTraj(int index) {
         Decelerate(cfg::SystemConfig::teamOnePlayerVel[index].z(),
                    cfg::SystemConfig::playerMaxOmegaAcceleration);
   };
-
 }
 }  // namespace Traj
