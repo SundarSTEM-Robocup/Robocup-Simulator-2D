@@ -15,10 +15,20 @@ void Trapezoidal_Traj::SetVelocityFromTraj(int index) {
                 cfg::SystemConfig::currBallPosition);
     Path.RobotInd = index + 1;
     init[index] = true;
-    if (cfg::SystemConfig::teamOnePath[index].size() == 0) {
-      Path.update(cfg::SystemConfig::teamOnePlayerPos[index].head<2>(),
-                  cfg::SystemConfig::currBallPosition);
+    if ((cfg::SystemConfig::teamOnePlayerPos[index].head<2>() -
+         cfg::SystemConfig::currBallPosition)
+            .norm() > 0.3) {
+      std::cout << "[Traj::Trapezoidal_Traj::SetVelocityFromTraj] Dist: "
+                << (cfg::SystemConfig::teamOnePlayerPos[index].head<2>() -
+                    cfg::SystemConfig::currBallPosition)
+                       .norm()
+                << std::endl;
+      Path.CreatePath(cfg::SystemConfig::teamOnePlayerPos[index].head<2>(),
+                      cfg::SystemConfig::currBallPosition);
+    } else {
+      cfg::SystemConfig::teamOnePath[index].clear();
     }
+
     if (cfg::SystemConfig::teamOnePath[index].size() == 0) {
       std::cout << "[Traj::Trapezoidal_Traj::SetVelocityFromTraj] No Waypoints or Path to follow, "
                    "returning"

@@ -13,7 +13,7 @@ class Trapezoidal_Traj {
   std::vector<bool> init;
 
  public:
- PathManager::Dstar Path;
+ PathManager::DirectDrive Path;
   Trapezoidal_Traj();
   void SetVelocityFromTraj(int index);
 };
